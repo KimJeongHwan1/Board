@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 마이바티스 3 Mapper DOCTYPE -->
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="board.dao.face.BoardDao">
+<select id="selectAll" parameterType="board.util.Paging" resultType="board.dto.Board">
+	SELECT Bo.* FROM ( SELECT (ROW_NUMBER() OVER()) AS rnum , B.* FROM (
+	SELECT no , kategorie , title , name , id , hit , view , date , content FROM board
+	 ) B ORDER BY rnum
+	) Bo
+	WHERE rnum BETWEEN #{startNo } AND #{endNo } 
+</select>
+	
+<select id="selectCntAll" parameterType="map" resultType="int">
+	SELECT COUNT(*) FROM board
+</select>
+
+<select id="selectBoardByBoardno" parameterType="board.dto.Board" resultType="board.dto.Board">
+	SELECT * FROM board
+	WHERE no = #{no }
+</select>
+
+</mapper>
