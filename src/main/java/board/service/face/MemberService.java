@@ -18,5 +18,9 @@ public interface MemberService {
 	// 로그인한 회원 데이터 가져오기
 	public Member getMember(Member member);
 	
+	// 아이디 중복확인
 	public boolean idCheck(String member_id);
+	
+	// 회원 아이디로 회원 이름 가져오기
+	public String getMember_name(String loginid);
 }

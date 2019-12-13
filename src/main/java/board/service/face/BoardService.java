@@ -3,9 +3,11 @@ package board.service.face;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import board.dto.Board;
 import board.util.Paging;
@@ -21,14 +23,16 @@ public interface BoardService {
 	 */
 	public List getBoardList( Paging paging ) ;
 	
-	/**
-	 * 요청파라미터에서 curPage를 파싱한다
-	 * 
-	 * @param req - 요청정보객체
-	 * @return Paging - 페이징 계산이 완료된 객체
-	 */
 	public Paging getCurPage(Map<String,Object> map);
 
+	// 게시글 상세보기
 	public Board view(Board board);
+
+	// 게시글 작성
+	public void insertwrite(Board board) ;
 	
+	//public void imgsave(ServletContext context, Board board , MultipartHttpServletRequest mtfRequest) ;
+	
+	// 게시글 삭제 ( delete 컬럼을 0으로 바꿈 )
+	public void deleteList(int no) ;
 }

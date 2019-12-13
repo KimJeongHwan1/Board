@@ -36,4 +36,12 @@ public interface BoardDao {
 	 */
 	public Board selectBoardByBoardno(Board board );
 	
+	// 회원이 게시글 작성했을 때
+	public void userwrite( Board board ) ;
+
+	// 비회원이 게시글 작성했을 떼
+	public void nickwrite( Board board ) ;
+	
+	// 번호를 0으로 바꾸고 조건문을 걸어 게시글을 가림
+	public void deleteList( int no ) ;
 }

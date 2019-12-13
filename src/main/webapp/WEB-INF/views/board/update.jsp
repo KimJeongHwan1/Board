@@ -103,7 +103,7 @@
 </tr>
 </table>
 
-<button class="btn btn-success" id="insert" >작성</button>
+<button class="btn btn-success" id="insert" >수정</button>
 <input type="button" id="deleteBtn" value="취소" onclick="button_back();" class="btn btn-danger"/>
 </form>
 

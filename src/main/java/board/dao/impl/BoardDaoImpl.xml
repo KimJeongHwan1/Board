@@ -8,8 +8,8 @@
 <mapper namespace="board.dao.face.BoardDao">
 <select id="selectAll" parameterType="board.util.Paging" resultType="board.dto.Board">
 	SELECT Bo.* FROM ( SELECT (ROW_NUMBER() OVER()) AS rnum , B.* FROM (
-	SELECT no , kategorie , title , name , id , hit , view , date , content FROM board
-	 ) B ORDER BY rnum
+	SELECT no , kategorie , title , name , id , hit , view , date , content , nick , basic , code , blocksee , delete FROM board where delete > 0
+	 ) B ORDER BY date desc
 	) Bo
 	WHERE rnum BETWEEN #{startNo } AND #{endNo } 
 </select>
@@ -23,4 +23,23 @@
 	WHERE no = #{no }
 </select>
 
+<insert id="userwrite" parameterType="board.dto.Board">
+	insert into board( no, kategorie, title, name, id,
+	hit, view, date, content, file_no, originname, storedname, blocksee, basic , code , delete )
+	values( nextval('no_seq'), #{kategorie }, #{title }, #{name },
+	#{id }, 0, 0, now(), #{content}, 0, 0, 0, #{blocksee}, #{basic} , #{code} , 1)
+</insert>
+
+<insert id="nickwrite" parameterType="board.dto.Board">
+	insert into board( no, kategorie, title,
+	hit, view, date, content, file_no, originname, storedname, blocksee, basic, nick , delete )
+	values( nextval('no_seq'), #{kategorie }, #{title }, 0, 0, now(), #{content}, 0, 0, 0, #{blocksee}, #{basic}, #{nick} , 1 )
+</insert>
+
+<update id="deleteList"
+	parameterType="int">
+	update board set delete = 0
+	where no = #{no}
+</update>
+	
 </mapper>

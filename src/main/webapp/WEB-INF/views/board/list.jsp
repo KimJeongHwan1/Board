@@ -129,12 +129,13 @@ table , th {
 				<input type="checkbox" id="checkAll" onclick="checkAll();" />
 			</th>
 			<th style="width: 5%; text-align: center;">No.</th>
-			<th style="width: 10%;">구분</th>		
-			<th style="width: 30%; text-align: center;">제목</th>
-			<th style="width: 15%; text-align: center;">작성자(ID)</th>
+			<th style="width: 15%;">카테고리</th>		
+			<th style="width: 25%; text-align: center;">제목</th>
+			<th style="width: 15%; text-align: center;">작성자(ID)</th>		
 			<th style="width: 7%; ">추천수</th>
 			<th style="width: 8%; ">조회수</th>
-			<th style="width: 20%; text-align: center; ">최종 작성일자</th>
+			<th style="width: 15%; text-align: center; ">최종 작성일자</th>
+			<th style="width: 10%; text-align: center; ">구분</th>
 		</tr>
 	</thead>
 
@@ -145,11 +146,27 @@ table , th {
 		</td>
 		<td>${b.no }</td>
 		<td>${b.kategorie }</td>
+		<c:if test="${b.basic eq 0 }">
 		<td id="title"><a href="/board/view?no=${b.no }">${b.title }</a></td>
+		</c:if>
+		<c:if test="${b.basic eq 1 }">
+		<td id="title">[중요]<a href="/board/view?no=${b.no }">${b.title }</a></td>
+		</c:if>
+		<c:if test="${b.id != null }">
 		<td>${b.name }(${b.id })</td>
+		</c:if>
+		<c:if test="${b.id eq null }">
+		<td>${b.nick }</td>
+		</c:if>
 		<td>${b.hit }</td>
 		<td>${b.view}</td>
 		<td><fmt:formatDate value="${b.date }" pattern="yyyy-MM-dd HH:mm:ss" /></td>
+		<c:if test="${b.blocksee eq 0 }">
+		<td>공개</td>
+		</c:if>
+		<c:if test="${b.blocksee eq 1 }">
+		<td>비공개</td>
+		</c:if>
 	</tr>
 																	
 	<c:set var="i" value="${sum }"/>

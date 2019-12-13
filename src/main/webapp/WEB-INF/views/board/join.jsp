@@ -13,22 +13,19 @@
 		<label for="id">아이디</label>
 		<input type="text" class="form-control" id="idcheck" name="id" placeholder="ID"
 				 required><br>
-		<input type="button" value="중복확인" onclick="return validation()">
-		<div class="check_font" id="id_check"></div>
+		<button type="button" id="idck">중복확인</button> &nbsp;&nbsp;&nbsp;<span id="check_id"></span><br>
 	</div>
-
 	<!-- 비밀번호 -->
 	<div class="form-group">
 		<label for="pw">비밀번호</label> 
 		<input type="password" class="form-control" name="pw" placeholder="PASSWORD" required>
-		<!-- <div class="check_font" id="pw_check"></div> -->
+		
 	</div>
 	<!-- 이름 -->
 	<div class="form-group">
 		<label for="name">이름</label> <input type="text"
 			class="form-control" id="name" name="name"
 			placeholder="Name" required>
-		<div class="check_font" id="name_check"></div>
 	</div>
 	
 		<div class="reg_button">

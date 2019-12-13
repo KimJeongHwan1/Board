@@ -11,6 +11,11 @@
 		WHERE id = #{loginid }
 </select>
 
+<select id="getMember_name" parameterType="String" resultType="String">
+	SELECT name FROM member
+		WHERE id = #{loginid }
+</select>
+
 <insert id="member_insert" parameterType="board.dto.Member">
 	INSERT INTO member ( code , id , pw , name , admin )
 	VALUES ( nextval('mem_seq') , #{id} , #{pw} , #{name} , 0 )
