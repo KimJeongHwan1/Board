@@ -3,15 +3,33 @@
     
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>  
-
-<c:import url="/WEB-INF/views/layout/header.jsp" />
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+<script type="text/javascript"
+ src="http://code.jquery.com/jquery-2.2.4.min.js"></script>
+ <c:import url="/WEB-INF/views/tilesView/body.jsp"/>
+ 
+  <!-- List CSS -->
+<style type="text/css">
+table , th {
+	width: 1000px ;
+	text-align: center;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 10%;
+}
+#btnBox {
+	position: absolute;
+	margin-left: 1000px ;
+</style>
 
 <script type="text/javascript">
 $(document).ready(function() {
 	
 	//글쓰기 버튼 누르면 이동
 	$("#btnWrite").click(function() {
-		location.href="/board/write";
+		location.href="/board/write.do";
 	});
 	
 	$("#btnSearch").click(function() {
@@ -27,35 +45,35 @@ $(document).ready(function() {
 				
 		//방법1
 		// 체크된 대상들을 하나씩 꺼내서 문자열로 합치기
-// 		var names = "";
-// 		var len = $checkboxes.length;
-// 		$checkboxes.each( function(idx) {
-// 			names += $(this).val();
+/*  		var names = "";
+ 		var len = $checkboxes.length;
+  		$checkboxes.each( function(idx) {
+ 			names += $(this).val();
 			
-// 			if( len-1 != idx ) {
-// 				names += ",";
-// 			}
-// 		});
-// 		console.log(names);
-	
+			if( len-1 != idx ) {
+ 				names += ",";
+ 			}
+		});
+ 		console.log(names);
+	 */
 		//방법2
 		// 체크된 대상들을 map으로 만들고 map을 문자열로 만들기
 		var map = $checkboxes.map(function() {
 			return $(this).val();
 		});
 		var names = map.get().join(",");
-// 		console.log("names : " + names);
+ 	//	console.log("names : " + names);
 
-// 		console.log($checkboxes);
-// 		console.log( "map:" + map );	// 맵
-// 		console.log( "map->array : " + map.get() );	// 맵->배열
-// 		console.log( "array tostring : " + map.get().join(",") ); // toString
+ 	//	console.log($checkboxes);
+ 	//	console.log( "map:" + map );	// 맵
+ 	//	console.log( "map->array : " + map.get() );	// 맵->배열
+ 	//	console.log( "array tostring : " + map.get().join(",") ); // toString
 		
 		
 		
 		// 전송 폼
 		var $form = $("<form>")
-			.attr("action", "/board/listDelete")
+			.attr("action", "/board/listDelete.do")
 			.attr("method", "post")
 			.append(
 				$("<input>")
@@ -92,36 +110,18 @@ function checkAll() {
 }
 </script>
 
-<style type="text/css">
-table , th {
-	width: 1000px ;
-	text-align: center;
-	margin-left: auto;
-	margin-right: auto;
-	margin-top: 10%;
-}
 
-#title {
-	display: inline-block;
-	width: 200px;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-}
-#pagingBox {
-	position: relative;
-}
-#btnBox {
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	right: 0;
-	height: 40px;
-	margin: auto;
-}
-</style>
-
-<div id="list">
+<div class="container">
+<form action="/board/list.do" method="post" id="board_row" >
+	<div>
+		<select id="row" name="row" onchange="submit(this.value)">
+			<option value="15">15개</option>
+			<option value="50">50개</option>
+			<option value="100">100개</option>
+		</select>
+	</div>
+</form>
+	<div id="list">
 <table>
 	<thead>
 		<tr>
@@ -139,37 +139,37 @@ table , th {
 		</tr>
 	</thead>
 
-<c:forEach items="${list}" var="b">
+<c:forEach items="${list}" var="list">
 	<tr>
 		<td>
-			<input type="checkbox" name="checkRow" value="${b.no }" />
+			<input type="checkbox" name="checkRow" value="${list.ojt_board_no }" />
 		</td>
-		<td>${b.no }</td>
-		<td>${b.kategorie }</td>
-		<c:if test="${b.basic eq 0 }">
-		<td id="title"><a href="/board/view?no=${b.no }">${b.title }</a></td>
+		<td>${list.ojt_board_no }</td>
+		<td>${list.ojt_board_category }</td>
+		<c:if test="${list.ojt_board_import eq 0 }">
+		<td id="title"><a href="/board/view.do?ojt_board_no=${list.ojt_board_no }">${list.ojt_board_title }</a></td>
 		</c:if>
-		<c:if test="${b.basic eq 1 }">
-		<td id="title">[중요]<a href="/board/view?no=${b.no }">${b.title }</a></td>
+		<c:if test="${list.ojt_board_import eq 1 }">
+		<td id="title">[중요]<a href="/board/view.do?ojt_board_no=${list.ojt_board_no }">${list.ojt_board_title }</a></td>
 		</c:if>
-		<c:if test="${b.id != null }">
-		<td>${b.name }(${b.id })</td>
+		<c:if test="${list.mem_id != null }">
+		<td>${list.mem_name }(${list.mem_id })</td>
 		</c:if>
-		<c:if test="${b.id eq null }">
-		<td>${b.nick }</td>
+		<c:if test="${list.mem_id eq null }">
+		<td>${list.ojt_board_nick }</td>
 		</c:if>
-		<td>${b.hit }</td>
-		<td>${b.view}</td>
-		<td><fmt:formatDate value="${b.date }" pattern="yyyy-MM-dd HH:mm:ss" /></td>
-		<c:if test="${b.blocksee eq 0 }">
+		<td>${list.ojt_board_recommend }</td>
+		<td>${list.ojt_board_hit}</td>
+		<td>${list.last_date }</td>
+		<c:if test="${list.ojt_board_block eq 0 }">
 		<td>공개</td>
 		</c:if>
-		<c:if test="${b.blocksee eq 1 }">
+		<c:if test="${list.ojt_board_block eq 1 }">
 		<td>비공개</td>
 		</c:if>
 	</tr>
 																	
-	<c:set var="i" value="${sum }"/>
+	<c:set var="list" value="${sum }"/>
 	
 </c:forEach>
 
@@ -179,7 +179,7 @@ table , th {
 <div class="clearfix"></div>
 
 <div id="pagingBox">
-<c:import url="/WEB-INF/views/layout/BoardPaging.jsp" />
+<c:import url="/WEB-INF/views/tilesView/BoardPaging.jsp" />
 
 <div id="btnBox">
 	<button id="btnWrite" class="btn btn-primary">글쓰기</button>
@@ -191,5 +191,4 @@ table , th {
 	<button id="btnSearch" class="btn">검색</button>
 </div> 
 </div>
-
-<c:import url="/WEB-INF/views/layout/footer.jsp" />
+</div>

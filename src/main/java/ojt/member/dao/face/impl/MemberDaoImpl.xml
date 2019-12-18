@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 마이바티스 3 Mapper DOCTYPE -->
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ojt.member.dao.face.MemberDao">
+
+<select id="getMember_name" parameterType="String" resultType="String">
+	SELECT MEM_NAME FROM MEMBER
+		WHERE MEM_ID = #{loginid }
+</select>
+
+<insert id="member_insert" parameterType="ojt.member.dto.MemberDto">
+	INSERT INTO MEMBER ( MEM_ID , MEM_NAME , MEM_PW , MEM_ADMIN )
+	VALUES ( #{mem_id} , #{mem_name} , #{mem_pw} , 0 )
+</insert>
+
+<select id="selectByMember" parameterType="ojt.member.dto.MemberDto" resultType="ojt.member.dto.MemberDto">
+		SELECT MEM_ID , MEM_NAME , MEM_PW , MEM_ADMIN FROM MEMBER
+		WHERE MEM_ID = #{mem_id }
+</select>
+
+<select id="selectCntLogin" parameterType="ojt.member.dto.MemberDto" resultType="int">
+		SELECT COUNT(*) FROM MEMBER WHERE MEM_ID = #{mem_id } AND MEM_PW = #{mem_pw }
+</select> 
+
+<select id="joinCheckid" parameterType="String" resultType="int">
+		SELECT COUNT(*) FROM MEMBER WHERE MEM_ID = #{mem_id }
+</select> 
+</mapper>

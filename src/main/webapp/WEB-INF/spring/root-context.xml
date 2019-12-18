@@ -33,13 +33,14 @@
 	 	<property name="mapperLocations">
 	 		<array>
 	 			<value>classpath:/mappers/**/*Mapper.xml</value>
-	 			<value>classpath:/board/dao/impl/**/*DaoImpl.xml</value>
+	 			<value>classpath:/ojt/board/dao/face/impl/*DaoImpl.xml</value>
+	 			<value>classpath:/ojt/member/dao/face/impl/*DaoImpl.xml</value>
 	 		</array>
 	 	</property>
 	</bean>  	
 	
 	<!-- 마이바티스 인터페이스 설정 -->
 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-		<property name="basePackage" value="board.dao.face"/>
+		<property name="basePackage" value="ojt.board.dao.face , ojt.member.dao.face"/>
 	</bean>
 </beans>
