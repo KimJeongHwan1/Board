@@ -7,7 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 public class BoardDto {
 	
-	int ojt_board_no ; // 게시글 번호
+	int ojt_board_no ; // 게시글 seq
 	String ojt_board_category ; // 게시글 구분
 	String ojt_board_title ; // 게시글 제목
 	String ojt_board_content ; // 게시글 내용
@@ -20,11 +20,11 @@ public class BoardDto {
 	String ojt_board_nick ; // 비회원 닉네임
 	String ojt_board_nick_pw ; // 비회원 작성 / 수정 비밀번호
 	String ojt_board_del_plug ; // N / Y 로 구별하여 게시글 삭제 여부 확인 ( Default N )
-	String last_date ;
-	String mem_name ;
-	String ojt_board_file ;
-	
-
+	String last_date ; // String형 게시글 마지막 작성/수정 시간
+	String mem_name ; // 회원 이름
+	String file_stored_name ; // 업로드된 파일 이름
+	int rnum ; // 게시글 번호
+	int count_file  ;
 	public int getOjt_board_no() {
 		return ojt_board_no;
 	}
@@ -115,11 +115,23 @@ public class BoardDto {
 	public void setMem_name(String mem_name) {
 		this.mem_name = mem_name;
 	}
-	public String getOjt_board_file() {
-		return ojt_board_file;
+	public String getFile_stored_name() {
+		return file_stored_name;
 	}
-	public void setOjt_board_file(String ojt_board_file) {
-		this.ojt_board_file = ojt_board_file;
+	public void setFile_stored_name(String file_stored_name) {
+		this.file_stored_name = file_stored_name;
+	}
+	public int getRnum() {
+		return rnum;
+	}
+	public void setRnum(int rnum) {
+		this.rnum = rnum;
+	}
+	public int getCount_file() {
+		return count_file;
+	}
+	public void setCount_file(int count_file) {
+		this.count_file = count_file;
 	}
 	@Override
 	public String toString() {
@@ -129,12 +141,9 @@ public class BoardDto {
 				+ ", ojt_board_last_date=" + ojt_board_last_date + ", ojt_board_block=" + ojt_board_block
 				+ ", ojt_board_import=" + ojt_board_import + ", mem_id=" + mem_id + ", ojt_board_nick=" + ojt_board_nick
 				+ ", ojt_board_nick_pw=" + ojt_board_nick_pw + ", ojt_board_del_plug=" + ojt_board_del_plug
-				+ ", last_date=" + last_date + ", mem_name=" + mem_name + ", ojt_board_file=" + ojt_board_file + "]";
+				+ ", last_date=" + last_date + ", mem_name=" + mem_name + ", file_stored_name=" + file_stored_name
+				+ ", rnum=" + rnum + ", count_file=" + count_file + "]";
 	}
 	
 	
-	
-	
-	
-		
 }

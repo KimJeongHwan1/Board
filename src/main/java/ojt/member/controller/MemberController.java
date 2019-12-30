@@ -97,7 +97,7 @@ public class MemberController {
 		return "redirect:/member/login.do";
 	}
 		
-	@RequestMapping(value="/member/idCheck", method=RequestMethod.GET)
+	@RequestMapping(value="/member/check/idCheck.do", method=RequestMethod.GET)
 	public String idCheck(String mem_id, Model model) {
 
 		logger.info("아이디 : "+ mem_id);
@@ -110,7 +110,7 @@ public class MemberController {
 			check = 1;
 		}
 		model.addAttribute("check", check);
-		return "member/joincheck";
+		return "member/check/joincheck";
 	}
 
 	

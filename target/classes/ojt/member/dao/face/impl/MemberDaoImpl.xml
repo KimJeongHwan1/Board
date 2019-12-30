@@ -13,20 +13,46 @@
 </select>
 
 <insert id="member_insert" parameterType="ojt.member.dto.MemberDto">
-	INSERT INTO MEMBER ( MEM_ID , MEM_NAME , MEM_PW , MEM_ADMIN )
-	VALUES ( #{mem_id} , #{mem_name} , #{mem_pw} , 0 )
+	INSERT INTO MEMBER ( 
+		MEM_ID , 
+		MEM_NAME , 
+		MEM_PW , 
+		MEM_ADMIN 
+	) VALUES ( 
+		#{mem_id} , 
+		#{mem_name} , 
+		#{mem_pw} , 
+		0 
+	)
 </insert>
 
 <select id="selectByMember" parameterType="ojt.member.dto.MemberDto" resultType="ojt.member.dto.MemberDto">
-		SELECT MEM_ID , MEM_NAME , MEM_PW , MEM_ADMIN FROM MEMBER
+		SELECT 
+			MEM_ID , 
+			MEM_NAME , 
+			MEM_PW , 
+			MEM_ADMIN 
+		FROM MEMBER
 		WHERE MEM_ID = #{mem_id }
 </select>
 
 <select id="selectCntLogin" parameterType="ojt.member.dto.MemberDto" resultType="int">
-		SELECT COUNT(*) FROM MEMBER WHERE MEM_ID = #{mem_id } AND MEM_PW = #{mem_pw }
+		SELECT 
+			COUNT(*) 
+		FROM 
+			MEMBER 
+		WHERE 
+			MEM_ID = #{mem_id } 
+		AND 
+			MEM_PW = #{mem_pw }
 </select> 
 
 <select id="joinCheckid" parameterType="String" resultType="int">
-		SELECT COUNT(*) FROM MEMBER WHERE MEM_ID = #{mem_id }
+		SELECT 
+			COUNT(*) 
+		FROM 
+			MEMBER 
+		WHERE 
+			MEM_ID = #{mem_id }
 </select> 
 </mapper>

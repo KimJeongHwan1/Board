@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import ojt.board.dto.BoardDto;
 import ojt.board.dto.BoardFileDto;
+import ojt.board.dto.BoardRecommendDto;
 import ojt.board.util.Paging;
 
 @Repository
@@ -49,18 +50,44 @@ public interface BoardDao {
 	
 	// 조회수 증가
 	public void updateHit( BoardDto viewBoard ) ;
-	
-	// 추천수 증가
-	public void recommend( int ojt_board_no ) ;
-	
-	// 추천수 감소
-	public void d_recommand( int ojt_board_no ) ;
-	
-	// 게시글 리스트 갯수 조정
-	public void row( String row ) ;
 
+	// 체크박스로 게시글 삭제
 	public void deleteBoardList(String names);
 	
+	// 파일첨부 Insert
 	public void insertFile( BoardFileDto boardFileDto ) ;
+	
+	// 게시글 번호로 닉네임 비밀번호 가져오기
+	public String nick_pw( BoardDto boardDto ) ;
+	
+	// ID와 게시글 번호를 COUNT 매겨 추천 했는지 확인
+	public int saveRecBlock( BoardRecommendDto boardRecommendDto ) ;
+	
+	// BOARD_NO로 총 추천수 확인
+	public int saveRecCount( int ojt_board_no ) ;
+	
+	// 테이블에서 게시글번호와 ID를 합친 값을 지움
+	public void deleteRec( BoardRecommendDto boardRecommendDto  ) ;
+	
+	// 테이블에서 게시글번호와 ID를 합친 값을 넣음
+	public void saveRecId( BoardRecommendDto boardRecommendDto  ) ;
+	
+	// 추천수 + 1
+	public void RecUp( int ojt_board_no ) ;
+	
+	// 추천수 - 1
+	public void RecDown( int ojt_board_no ) ;
+	
+	// 파일 Del_flug를 'N'으로 바꿈
+	public void deleteFile( int ojt_board_no ) ;
+	
+	// 수정페이지 첨부파일
+	public void updateFile( BoardFileDto boardFileDto ) ;
+	
+	// 리스트로 삭제시 첨부파일 Y 처리
+	public void deleteListFile( String names ) ;
+	
+	// 파일 리스트를 상세보기 페이지에 보여주는 리스트
+	public List<BoardFileDto> selectNoFile( BoardFileDto boardFileDto ) ;
 	
 }

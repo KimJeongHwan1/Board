@@ -8,139 +8,403 @@
 <mapper namespace="ojt.board.dao.face.BoardDao">
 	<select id="selectAll" parameterType="ojt.board.util.Paging"
 		resultType="ojt.board.dto.BoardDto">
-		SELECT Bo.* FROM ( SELECT (ROW_NUMBER() OVER()) AS RNUM ,
-		B.* FROM (
-		SELECT OJT_BOARD_NO , OJT_BOARD_CATEGORY , OJT_BOARD_TITLE ,
-		OJT_BOARD_CONTENT , OJT_BOARD_RECOMMEND , OJT_BOARD_LAST_DATE
-		,
-		OJT_BOARD_HIT ,
-		TO_CHAR(OJT_BOARD_LAST_DATE, 'YYYYMMDD')
-		,TO_CHAR(NOW(), 'YYYYMMDD')
-		,CASE WHEN TO_CHAR(OJT_BOARD_LAST_DATE,
-		'YYYYMMDD') = TO_CHAR(NOW(), 'YYYYMMDD') THEN
-		TO_CHAR(OJT_BOARD_LAST_DATE, 'HH:MI:SS')
-		ELSE TO_CHAR(OJT_BOARD_LAST_DATE, 'YYYY-MM-DD HH:MI:SS')
-		END AS LAST_DATE
-		, OJT_BOARD_BLOCK ,
-		OJT_BOARD_IMPORT , OJT_BOARD.MEM_ID ,
-		OJT_BOARD_NICK
-		,
-		OJT_BOARD_NICK_PW , OJT_BOARD_DEL_PLUG, MEMBER.MEM_NAME
-		FROM OJT_BOARD
-		LEFT OUTER JOIN MEMBER ON OJT_BOARD.MEM_ID = MEMBER.MEM_ID
-		WHERE
-		OJT_BOARD_DEL_PLUG = 'Y'
-		) B
-		ORDER BY OJT_BOARD_LAST_DATE DESC
-		) Bo
-		WHERE
-		RNUM BETWEEN #{startNo } AND #{endNo }
+		SELECT 
+			RNUM ,
+			OJT_BOARD_NO ,
+			OJT_BOARD_CATEGORY ,
+			OJT_BOARD_TITLE ,
+			OJT_BOARD_CONTENT ,
+			OJT_BOARD_RECOMMEND ,
+			OJT_BOARD_LAST_DATE ,
+			OJT_BOARD_HIT ,
+			TO_CHAR(OJT_BOARD_LAST_DATE, 'YYYYMMDD') ,
+			LAST_DATE ,
+			OJT_BOARD_BLOCK ,
+			OJT_BOARD_IMPORT ,
+			MEM_ID ,
+			OJT_BOARD_NICK ,
+			OJT_BOARD_NICK_PW , 
+			OJT_BOARD_DEL_PLUG, 
+			MEM_NAME,
+			COUNT_FILE
+		FROM (
+			SELECT 
+				(ROW_NUMBER() OVER()) AS RNUM ,
+				OJT_BOARD_NO ,
+				OJT_BOARD_CATEGORY ,
+				OJT_BOARD_TITLE ,
+				OJT_BOARD_CONTENT ,
+				OJT_BOARD_RECOMMEND ,
+				OJT_BOARD_LAST_DATE ,
+				OJT_BOARD_HIT ,
+				TO_CHAR(OJT_BOARD_LAST_DATE, 'YYYYMMDD') ,
+				LAST_DATE ,
+				OJT_BOARD_BLOCK ,
+				OJT_BOARD_IMPORT ,
+				MEM_ID ,
+				OJT_BOARD_NICK ,
+				OJT_BOARD_NICK_PW , 
+				OJT_BOARD_DEL_PLUG, 
+				MEM_NAME,
+				COUNT_FILE 
+			FROM ( 
+				SELECT
+					OJT_BOARD_NO ,
+					OJT_BOARD_CATEGORY ,
+					OJT_BOARD_TITLE ,
+					OJT_BOARD_CONTENT ,
+					OJT_BOARD_RECOMMEND ,
+					OJT_BOARD_LAST_DATE ,
+					OJT_BOARD_HIT ,
+					TO_CHAR(OJT_BOARD_LAST_DATE, 'YYYYMMDD') ,
+					LAST_DATE ,
+					OJT_BOARD_BLOCK ,
+					OJT_BOARD_IMPORT ,
+					MEM_ID ,
+					OJT_BOARD_NICK ,
+					OJT_BOARD_NICK_PW , 
+					OJT_BOARD_DEL_PLUG, 
+					MEM_NAME,
+					COUNT_FILE
+				FROM (
+					SELECT 
+						OJT_BOARD.OJT_BOARD_NO ,
+						OJT_BOARD_CATEGORY ,
+						OJT_BOARD_TITLE ,
+						OJT_BOARD_CONTENT ,
+						OJT_BOARD_RECOMMEND ,
+						OJT_BOARD_LAST_DATE ,
+						OJT_BOARD_HIT ,
+						TO_CHAR(OJT_BOARD_LAST_DATE, 'YYYYMMDD') ,
+						TO_CHAR(NOW(), 'YYYYMMDD') ,
+					CASE WHEN 
+						TO_CHAR(OJT_BOARD_LAST_DATE, 'YYYYMMDD') = TO_CHAR(NOW(), 'YYYYMMDD') 
+					THEN
+						TO_CHAR(OJT_BOARD_LAST_DATE, 'HH24:MI:SS')
+					ELSE
+						TO_CHAR(OJT_BOARD_LAST_DATE, 'YYYY-MM-DD HH24:MI:SS')
+					END AS LAST_DATE ,
+						OJT_BOARD_BLOCK ,
+						OJT_BOARD_IMPORT ,
+						OJT_BOARD.MEM_ID ,
+						OJT_BOARD.OJT_BOARD_NICK ,
+						OJT_BOARD_NICK_PW , 
+						OJT_BOARD_DEL_PLUG, 
+						MEMBER.MEM_NAME,
+						COUNT(OJT_FILE.FILE_NO) AS COUNT_FILE
+					FROM 
+						OJT_BOARD
+					LEFT OUTER JOIN 
+						MEMBER 
+					ON 
+						OJT_BOARD.MEM_ID = MEMBER.MEM_ID
+					INNER JOIN
+						OJT_FILE
+					ON
+						OJT_BOARD.OJT_BOARD_NO = OJT_FILE.OJT_BOARD_NO
+					WHERE
+						OJT_BOARD_DEL_PLUG = 'Y'
+					GROUP BY
+						OJT_BOARD.OJT_BOARD_NO,
+						MEMBER.MEM_NAME
+				) B 
+				ORDER BY 
+					OJT_BOARD_LAST_DATE
+				) Bo
+			) Bob
+		ORDER BY
+			RNUM
+		DESC
+		LIMIT
+			#{pageCount}
+		OFFSET
+			#{offSet}
+		
+
 	</select>
+
+ 
 
 	<select id="selectCntAll" parameterType="map" resultType="int">
 		SELECT
-		COUNT(*) FROM OJT_BOARD
+			COUNT(*) 
+		FROM 
+			OJT_BOARD
+		WHERE
+			OJT_BOARD_DEL_PLUG = 'Y'
 	</select>
 
 	<select id="selectBoardByBoardno"
 		parameterType="ojt.board.dto.BoardDto"
 		resultType="ojt.board.dto.BoardDto">
-		SELECT OJT_BOARD_NO , OJT_BOARD_CATEGORY , OJT_BOARD_TITLE ,
-		OJT_BOARD_CONTENT , OJT_BOARD_RECOMMEND , OJT_BOARD_LAST_DATE
-		,
-		OJT_BOARD_HIT ,
-		TO_CHAR(OJT_BOARD_LAST_DATE, 'YYYYMMDD')
-		,TO_CHAR(NOW(), 'YYYYMMDD')
-		,CASE WHEN TO_CHAR(OJT_BOARD_LAST_DATE,
-		'YYYYMMDD') = TO_CHAR(NOW(), 'YYYYMMDD') THEN
-		TO_CHAR(OJT_BOARD_LAST_DATE, 'HH:MI:SS')
-		ELSE TO_CHAR(OJT_BOARD_LAST_DATE, 'YYYY-MM-DD HH:MI:SS')
-		END AS LAST_DATE
-		, OJT_BOARD_BLOCK ,
-		OJT_BOARD_IMPORT , OJT_BOARD.MEM_ID ,
-		OJT_BOARD_NICK
-		,
-		OJT_BOARD_NICK_PW , OJT_BOARD_DEL_PLUG, MEMBER.MEM_NAME
-		FROM OJT_BOARD
-		LEFT OUTER JOIN MEMBER ON OJT_BOARD.MEM_ID = MEMBER.MEM_ID
-		WHERE OJT_BOARD_NO = #{ojt_board_no }
+		SELECT 
+			OJT_BOARD_NO ,
+			OJT_BOARD_CATEGORY , 
+			OJT_BOARD_TITLE ,
+			OJT_BOARD_CONTENT , 
+			OJT_BOARD_RECOMMEND , 
+			OJT_BOARD_LAST_DATE ,
+			OJT_BOARD_HIT ,
+			TO_CHAR(OJT_BOARD_LAST_DATE, 'YYYY-MM-DD HH24:MI:SS') AS LAST_DATE , 
+			OJT_BOARD_BLOCK ,
+			OJT_BOARD_IMPORT , 
+			OJT_BOARD.MEM_ID ,
+			OJT_BOARD_NICK ,
+			OJT_BOARD_NICK_PW , 
+			OJT_BOARD_DEL_PLUG , 
+			MEMBER.MEM_NAME
+		FROM 
+			OJT_BOARD
+		LEFT OUTER JOIN 
+			MEMBER 
+		ON 
+			OJT_BOARD.MEM_ID = MEMBER.MEM_ID
+		WHERE 
+			OJT_BOARD_NO = #{ojt_board_no }
 	</select>
 
 	<insert id="userwrite" parameterType="ojt.board.dto.BoardDto">
-		INSERT INTO OJT_BOARD(
-		OJT_BOARD_NO, OJT_BOARD_CATEGORY, OJT_BOARD_TITLE, OJT_BOARD_CONTENT,
-		OJT_BOARD_RECOMMEND,
-		OJT_BOARD_HIT, OJT_BOARD_LAST_DATE, OJT_BOARD_BLOCK,
-		OJT_BOARD_IMPORT, MEM_ID, OJT_BOARD_DEL_PLUG )
-		VALUES(
-		NEXTVAL('ojt_board_no_seq'), #{ojt_board_category }, #{ojt_board_title
-		}, #{ojt_board_content },
-		0, 0, NOW(), #{ojt_board_block},
-		#{ojt_board_import}, #{mem_id} , 'Y')
+		INSERT INTO 
+			OJT_BOARD(
+				OJT_BOARD_NO , 
+				OJT_BOARD_CATEGORY , 
+				OJT_BOARD_TITLE , 
+				OJT_BOARD_CONTENT ,
+				OJT_BOARD_RECOMMEND ,
+				OJT_BOARD_HIT , 
+				OJT_BOARD_LAST_DATE, 
+				OJT_BOARD_BLOCK ,
+				OJT_BOARD_IMPORT , 
+				MEM_ID, 
+				OJT_BOARD_DEL_PLUG 
+			) VALUES (
+				NEXTVAL('ojt_board_no_seq') , 
+				#{ojt_board_category } , 
+				#{ojt_board_title} , 
+				#{ojt_board_content } ,
+				0 , 
+				0 , 
+				NOW() , 
+				#{ojt_board_block } ,
+				#{ojt_board_import } , 
+				#{mem_id} , 
+				'Y'
+			)
 	</insert>
 
 	<insert id="nickwrite" parameterType="ojt.board.dto.BoardDto">
-		INSERT INTO OJT_BOARD(
-		OJT_BOARD_NO, OJT_BOARD_CATEGORY, OJT_BOARD_TITLE, OJT_BOARD_CONTENT,
-		OJT_BOARD_RECOMMEND,
-		OJT_BOARD_HIT, OJT_BOARD_LAST_DATE, OJT_BOARD_BLOCK,
-		OJT_BOARD_IMPORT, OJT_BOARD_NICK, OJT_BOARD_NICK_PW,
-		OJT_BOARD_DEL_PLUG )
-		VALUES(
-		NEXTVAL('ojt_board_no_seq'),
-		#{ojt_board_category }, #{ojt_board_title
-		}, #{ojt_board_content },
-		0,
-		0, NOW(), #{ojt_board_block},
-		#{ojt_board_import},
-		#{ojt_board_nick}, #{ojt_board_nick_pw}, 'Y')
+		INSERT INTO 
+			OJT_BOARD (
+				OJT_BOARD_NO , 
+				OJT_BOARD_CATEGORY , 
+				OJT_BOARD_TITLE , 
+				OJT_BOARD_CONTENT ,
+				OJT_BOARD_RECOMMEND ,
+				OJT_BOARD_HIT , 
+				OJT_BOARD_LAST_DATE , 
+				OJT_BOARD_BLOCK ,
+				OJT_BOARD_IMPORT , 
+				OJT_BOARD_NICK , 
+				OJT_BOARD_NICK_PW ,
+				OJT_BOARD_DEL_PLUG 
+			) VALUES (
+				NEXTVAL('ojt_board_no_seq') ,
+				#{ojt_board_category } , 
+				#{ojt_board_title } , 
+				#{ojt_board_content } ,
+				0 ,
+				0 , 
+				NOW() , 
+				#{ojt_board_block} ,
+				#{ojt_board_import} ,
+				#{ojt_board_nick} , 
+				#{ojt_board_nick_pw} , 
+				'Y'
+			)
 	</insert>
 
 	<update id="deleteList" parameterType="int">
-		UPDATE OJT_BOARD SET
-		OJT_BOARD_DEL_PLUG = 'N'
-		WHERE OJT_BOARD_NO = #{ojt_board_no}
+		UPDATE 
+			OJT_BOARD 
+		SET
+			OJT_BOARD_DEL_PLUG = 'N'
+		WHERE 
+			OJT_BOARD_NO = #{ojt_board_no}
 	</update>
 
 	<update id="update" parameterType="ojt.board.dto.BoardDto">
-	UPDATE OJT_BOARD SET
-	OJT_BOARD_TITLE = #{ojt_board_title} , OJT_BOARD_CATEGORY =
-	#{ojt_board_category} ,
-	OJT_BOARD_BLOCK = #{ojt_board_block} ,
-	OJT_BOARD_IMPORT = #{ojt_board_import} ,
-	OJT_BOARD_CONTENT = #{ojt_board_content} ,
-	OJT_BOARD_LAST_DATE = NOW()
-	WHERE OJT_BOARD_NO = #{ojt_board_no}
-	</update>
-	
-	<update id="updateHit" parameterType="ojt.board.dto.BoardDto">
-		UPDATE OJT_BOARD SET
-		OJT_BOARD_HIT = OJT_BOARD_HIT + 1
-		WHERE OJT_BOARD_NO = #{ojt_board_no}
-	</update>
-	
-	<update id="recommend" parameterType="int">
-		UPDATE OJT_BOARD SET OJT_BOARD_RECOMMEND = OJT_BOARD_RECOMMEND+1
-		WHERE OJT_BOARD_NO = #{ojt_board_no}
-	</update>
-	
-	<update id="d_recommend" parameterType="int">
-		UPDATE OJT_BOARD SET OJT_BOARD_RECOMMEND = OJT_BOARD_RECOMMEND-1
-		WHERE OJT_BOARD_NO = #{ojt_board_no}
+	UPDATE 
+		OJT_BOARD 
+	SET
+		OJT_BOARD_TITLE = #{ojt_board_title} , 
+		OJT_BOARD_CATEGORY = #{ojt_board_category} ,
+		OJT_BOARD_BLOCK = #{ojt_board_block} ,
+		OJT_BOARD_IMPORT = #{ojt_board_import} ,
+		OJT_BOARD_CONTENT = #{ojt_board_content} ,
+		OJT_BOARD_LAST_DATE = NOW()
+	WHERE 
+		OJT_BOARD_NO = #{ojt_board_no}
 	</update>
 
-	<update id="row" parameterType="String">
-		UPDATE OJT_BOARD_ROW SET
-		ROW = #{row}
+	<update id="updateHit" parameterType="ojt.board.dto.BoardDto">
+		UPDATE 
+			OJT_BOARD 
+		SET
+			OJT_BOARD_HIT = OJT_BOARD_HIT + 1
+		WHERE
+			OJT_BOARD_NO = #{ojt_board_no}
 	</update>
 	
 	<update id="deleteBoardList" parameterType="String">
-		UPDATE OJT_BOARD SET OJT_BOARD_DEL_PLUG = 'N'
-		WHERE OJT_BOARD_NO IN #{ +names+ }
+		UPDATE 
+			OJT_BOARD
+		SET 
+			OJT_BOARD_DEL_PLUG = 'N'
+		WHERE 
+			OJT_BOARD_NO
+		IN 
+			(${ value })
 	</update>
 	
-	<update id="insertFile" parameterType="ojt.board.dto.BoardFileDto">
-		INSERT INTO OJT_FILE( OJT_BOARD_NO , FILE_NO , FILE_ORIGIN_NAME , FILE_STORED_NAME )
-		VALUES (#{ojt_board_no}, NEXTVAL('ojt_file_seq') , #{file_origin_name} , #{file_stored_name} )
+	<insert id="insertFile" parameterType="ojt.board.dto.BoardFileDto">
+		INSERT INTO 
+			OJT_FILE ( 
+				FILE_NO, 
+				FILE_ORIGIN_NAME, 
+				FILE_STORED_NAME,
+				OJT_BOARD_NO,
+				MEM_ID,
+				OJT_BOARD_NICK,
+				FILE_DATE,
+				FILE_DEL_FLUG
+			) VALUES (
+				NEXTVAL('ojt_file_seq'),
+				#{file_origin_name},
+				#{file_stored_name},
+				CURRVAL('ojt_board_no_seq'),
+				#{mem_id},
+				#{ojt_board_nick},
+				NOW(),
+				'Y'
+			)
+	</insert>
+	
+	<select id="nick_pw" parameterType="ojt.board.dto.BoardDto"
+		resultType="String">
+		SELECT
+			OJT_BOARD_NICK_PW
+		FROM
+			OJT_BOARD
+		WHERE
+			OJT_BOARD_NO = #{ojt_board_no}
+	</select>
+	
+	<select id="saveRecBlock" parameterType="ojt.board.dto.BoardRecommendDto"
+		resultType="int">
+		SELECT 
+			COUNT(*)
+		FROM
+			OJT_BOARD_RECOMMEND
+		WHERE
+			( MEM_ID = #{mem_id} 
+		AND 
+			OJT_BOARD_NO = #{ojt_board_no})
+	</select>
+		
+	<select id="saveRecCount" parameterType="int" resultType="int">
+		SELECT
+			COUNT(*)
+		FROM
+			OJT_BOARD_RECOMMEND
+		WHERE
+			OJT_BOARD_NO = #{ojt_board_no}
+	</select>
+	
+	<delete id="deleteRec" parameterType="ojt.board.dto.BoardRecommendDto">
+		DELETE FROM
+			OJT_BOARD_RECOMMEND
+		WHERE
+			MEM_ID = #{mem_id}
+		AND
+			OJT_BOARD_NO = #{ojt_board_no}
+	</delete>
+	
+	<insert id="saveRecId">
+		INSERT INTO
+			OJT_BOARD_RECOMMEND (
+				MEM_ID,
+				OJT_BOARD_NO
+			) VALUES (
+				#{mem_id},
+				#{ojt_board_no}
+			)
+	</insert>
+	
+	<update id="RecUp" parameterType="int">
+		UPDATE
+			OJT_BOARD
+		SET
+			OJT_BOARD_RECOMMEND = OJT_BOARD_RECOMMEND + 1
+		WHERE
+			OJT_BOARD_NO = #{ojt_board_no}
 	</update>
+	
+	<update id="RecDown" parameterType="int">
+		UPDATE
+			OJT_BOARD
+		SET
+			OJT_BOARD_RECOMMEND = OJT_BOARD_RECOMMEND - 1
+		WHERE
+			OJT_BOARD_NO = #{ojt_board_no}
+	</update>
+	
+	<update id="deleteFile" parameterType="int">
+		UPDATE
+			OJT_FILE
+		SET
+			FILE_DEL_FLUG = 'N'
+		WHERE
+			OJT_BOARD_NO = #{ojt_board_no}
+	</update>
+	
+	<update id="updateFile" parameterType="ojt.board.dto.BoardFileDto">
+		UPDATE
+			OJT_FILE
+		SET
+			FILE_ORIGIN_NAME = #{file_origin_name},
+			FILE_STORED_NAME = #{file_stored_name},
+			FILE_DATE = NOW()
+		WHERE
+			OJT_BOARD_NO = #{ojt_board_no}
+	</update>
+	
+	<update id="deleteListFile" parameterType="String">
+		UPDATE 
+			OJT_FILE
+		SET 
+			FILE_DEL_FLUG = 'N'
+		WHERE 
+			OJT_BOARD_NO
+		IN 
+			(${ value })
+	</update>
+	
+	<select id="selectNoFile"
+	parameterType="ojt.board.dto.BoardFileDto"
+	resultType="ojt.board.dto.BoardFileDto">
+	SELECT 
+		FILE_NO,
+		FILE_ORIGIN_NAME,
+		FILE_STORED_NAME,
+		OJT_BOARD_NO,
+		MEM_ID,
+		OJT_BOARD_NICK,
+		FILE_DATE,
+		FILE_DEL_FLUG
+	FROM 
+		OJT_FILE
+	WHERE 
+		OJT_BOARD_NO = #{ojt_board_no }
+	</select>
+	
 </mapper>

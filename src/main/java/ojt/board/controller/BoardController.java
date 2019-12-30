@@ -1,25 +1,38 @@
 package ojt.board.controller;
 
 
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.websocket.Session;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import ojt.board.dto.BoardDto;
+import ojt.board.dto.BoardFileDto;
+import ojt.board.dto.BoardRecommendDto;
 import ojt.board.service.face.BoardService;
 import ojt.board.util.Paging;
 import ojt.member.dto.MemberDto;
@@ -47,10 +60,15 @@ public class BoardController {
 	@RequestMapping(value = "/board/list.do", method = {RequestMethod.POST,RequestMethod.GET})
 	public void list(
 			
-		@RequestParam(defaultValue="1") int curPage, Model model, BoardDto boardDto, HttpSession session
-			,String row) {
+		@RequestParam(defaultValue="1") int curPage,
+		Model model, BoardDto boardDto, HttpSession session
+			,String row, HttpServletRequest req ) {
 		
-		logger.info("BoardList Form");
+		// 세션에 등록된 정보불러오기
+		String loginid = (String)session.getAttribute("id");
+		
+		model.addAttribute("loginid" , loginid ) ;
+		logger.debug("BoardList Form");
 		
 		// 리스트 불러와서 페이징
 		Map<String,Object> map = new HashMap<String, Object>();
@@ -64,17 +82,35 @@ public class BoardController {
 		
 		model.addAttribute("list", list);
 		
-		boardService.row(row);
-		
+
 	}
 	
 	// 상세보기 페이지 GET
 	@RequestMapping(value = "/board/view.do", method = RequestMethod.GET)
-	public void view( BoardDto viewBoard , Model model , HttpSession session ) {
-
+	public void view( BoardDto viewBoard , Model model , HttpSession session , BoardRecommendDto boardRecommendDto,
+			BoardFileDto boardFileDto) {
+		// 세션에 등록된 정보불러오기
+		String loginid = (String)session.getAttribute("id");
+				
+		model.addAttribute("loginid" , loginid ) ;
 		viewBoard = boardService.selectView(viewBoard) ;
-		
+		logger.debug("viewBoard");
 		model.addAttribute( "viewBoard" , viewBoard ) ;
+		
+		boardRecommendDto.setMem_id( loginid );
+		
+		int recCheck = boardService.RecCheck(boardRecommendDto);
+		
+		model.addAttribute( "recCheck" , recCheck) ;
+		
+		int recnum = boardService.saveRecCount(viewBoard.getOjt_board_no());
+		
+		model.addAttribute( "rec_no" , recnum ) ;
+		
+		List<BoardFileDto> list = new ArrayList<BoardFileDto>();
+		list = (ArrayList<BoardFileDto>) boardService.selectFileView(boardFileDto);
+		model.addAttribute("boardFileDto" , list );
+		
 		
 	}
 	
@@ -85,7 +121,7 @@ public class BoardController {
 	      String loginid = (String)session.getAttribute("id");
 	      if ( loginid != null ) {
 	      boardDto.setMem_id(loginid);
-	
+	      logger.debug(boardDto.toString());
 	      String name = memberService.getMember_name(loginid);
 	      
 	      model.addAttribute( "name" , name );
@@ -98,8 +134,8 @@ public class BoardController {
 	// 글 쓰기 폼 POST
 	@RequestMapping(value = "/board/write.do", method = RequestMethod.POST)
 	   public String writeProc(HttpSession session, BoardDto boardDto,
-	         MultipartHttpServletRequest mtfRequest, MemberDto memberDto, Model model){
-	      logger.info(boardDto.toString());
+	         MultipartHttpServletRequest mreq, MemberDto memberDto, Model model, BoardFileDto boardFileDto){
+	      logger.debug(boardDto.toString());
 	      
 	      // 세션에 등록된 정보불러오기
 	      String loginid = (String)session.getAttribute("id");
@@ -107,15 +143,18 @@ public class BoardController {
 	      boardDto.setMem_id(loginid);
 	
 	      String name = memberService.getMember_name(loginid);
-	     // [[ -- 회원 이름 가져오기 -- ]]
+	      boardDto.setMem_name(name);
 	      
 	      }
-	     // if(mtfRequest == null) {
-	        boardService.insertwrite(boardDto);
-	    //  } else {
-	     //    boardService.imgsave(context, board, mtfRequest);
-	    //  }
-	         
+	      System.out.println( mreq );
+	      if ( mreq == null || boardFileDto.getFile_origin_name() == "") {
+	      boardService.insertwrite(boardDto);
+	      } else {
+	    	  if( loginid != null ) boardFileDto.setMem_id(loginid);
+	    	  if( loginid == null ) boardFileDto.setOjt_board_nick(boardDto.getOjt_board_nick());
+	    	  boardService.insertwrite(boardDto);
+	    	  boardService.insertFile(context, boardFileDto, mreq);
+	      }
 	      return "redirect:"+"/board/list.do";
 	   }
 	
@@ -124,7 +163,7 @@ public class BoardController {
 	public String deleteList(HttpSession session , int ojt_board_no) {
 		
 		boardService.deleteList(ojt_board_no);
-		
+		 
 		return "redirect:/board/list.do" ;
 		
 	}
@@ -142,31 +181,59 @@ public class BoardController {
 		String loginid = (String)session.getAttribute("id");
 		if ( loginid != null ) {
 			boardDto.setMem_id(loginid);
-
-			String name = memberService.getMember_name(loginid);
 		}
 
 		boardService.update(boardDto);
-
+		
 		return "redirect:"+"/board/list.do";
 
 	}
 
 	@RequestMapping(value = "/board/listDelete.do", method = RequestMethod.POST)
-	public String listDelete( String name , HttpServletRequest req) {
-		String names = req.getParameter( "names" ) ;
-		
-		if( !"".equals(names) && names != null) {
-			boardService.boardListDelete(names);
+	public String listDelete( String names , HttpServletRequest req) {
+		names = req.getParameter("checkRow");
+		System.out.println(names);
+	
+		if ( names != null && !names.equals("")) {
+		boardService.boardListDelete(names);
+		return "redirect:"+"/board/list.do";
+		} else
+		return null ;
 		}
-		return "sednRedirect"+"/board/list.do";
-	}
 	
-	@RequestMapping(value = "/board/recommend.do")
-	public String recommend(int ojt_board_no) {
-		return "forward:/board/view.do";
-	}
-	
+	@RequestMapping(value="/board/rec/recommend.do", method=RequestMethod.GET)
+	public void recommend(int ojt_board_no, HttpSession session, Model model, BoardRecommendDto boardRecommendDto) {
 
+		String mem_id= (String) session.getAttribute("id");
+
+		boardService.saveRecId( mem_id, ojt_board_no);
+
+		int rec_no = boardService.saveRecCount(ojt_board_no);
+
+
+		model.addAttribute("rec_no", rec_no);
+
+		boardRecommendDto.setOjt_board_no(ojt_board_no);
+		boardRecommendDto.setMem_id(mem_id);
+
+		int recCheck = boardService.RecCheck(boardRecommendDto);
+
+		model.addAttribute("recCheck", recCheck);
+		// return "/board/rec/recommend";
+	}
+
+	@RequestMapping(value="/board/rec/recBtn.do", method=RequestMethod.GET)
+	public void recobtn(int ojt_board_no, HttpSession session, Model model, BoardRecommendDto boardRecommendDto) {
+		String mem_id = (String) session.getAttribute("id");
+
+		boardRecommendDto.setOjt_board_no(ojt_board_no);
+		boardRecommendDto.setMem_id(mem_id);
+
+		int recCheck = boardService.RecCheck(boardRecommendDto);
+
+		model.addAttribute("recCheck", recCheck);
+
+		// return "/board/rec/recBtn";
+	}
 	
 }

@@ -4,10 +4,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import ojt.board.dto.BoardRowDto;
 
 public class Paging {
-	@Autowired BoardRowDto boardrowDto ;
 	
 	private int curPage;	//현재 페이지 번호 (현재 선택한 페이지)
 
@@ -19,7 +17,7 @@ public class Paging {
 	private int startPage;	//화면에 보이는 시작 페이지 (계산으로 알아냄)
 	private int endPage;	//화면에 보이는 끝 페이지 (계산으로 알아냄)
 	
-	private int startNo;	//게시물리스트 첫 번호
+	private int offSet;	//게시물리스트 첫 번호
 	private int endNo;	//게시물리스트 마지막 번호
 	
 	// 총 게시글 수만 입력하는 생성자
@@ -69,9 +67,9 @@ public class Paging {
 		// 기본값 설정
 		if(curPage == 0)	setCurPage(1);	//기본값으로 첫 페이지(1) 세팅
 		
-		if(listCount == 0 ) { setListCount(15); }
+		if(listCount == 0 ) setListCount(15); 
 		
-		if(pageCount == 0)	setPageCount(10); //한 화면에 보이는 페이지수 기본값(10) 세팅
+		if(pageCount == 0)	setPageCount(15); //한 화면에 보이는 페이지수 기본값(10) 세팅
 		
 		
 		// 총 페이지수 계산
@@ -93,7 +91,7 @@ public class Paging {
 		
 		
 		// 게시글 시작번호
-		startNo = (curPage-1)*listCount+1;
+		offSet = (curPage-1)*listCount;
 		// 게시글 끝번호
 		endNo = curPage*listCount;
 	}
@@ -102,7 +100,7 @@ public class Paging {
 	public String toString() {
 		return "Paging [curPage=" + curPage + ", totalCount=" + totalCount + ", listCount=" + listCount + ", totalPage="
 				+ totalPage + ", pageCount=" + pageCount + ", startPage=" + startPage + ", endPage=" + endPage
-				+ ", startNo=" + startNo + ", endNo=" + endNo + "]";
+				+ ", offSet=" + offSet + ", endNo=" + endNo + "]";
 	}
 
 	public int getCurPage() {
@@ -161,12 +159,12 @@ public class Paging {
 		this.endPage = endPage;
 	}
 
-	public int getStartNo() {
-		return startNo;
+	public int getOffSet() {
+		return offSet;
 	}
 
-	public void setStartNo(int startNo) {
-		this.startNo = startNo;
+	public void setOffSet(int offSet) {
+		this.offSet = offSet;
 	}
 
 	public int getEndNo() {
