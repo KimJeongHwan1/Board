@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+	xsi:schemaLocation="http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-4.3.xsd
+		http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
+	
+	<!-- Root Context: defines shared resources visible to all other web components -->
+
+	<bean class="org.apache.commons.dbcp.BasicDataSource" id="dataSourceSpied">
+		<property name="driverClassName"
+			value="org.postgresql.Driver"></property>
+		<property name="url"
+			value="jdbc:postgresql://localhost:5432/postgres"></property>
+		<property name="username" value="postgres"></property>
+		<property name="password" value="1111"></property>
+	</bean>
+	
+	<bean id="dataSource" class="net.sf.log4jdbc.Log4jdbcProxyDataSource">
+        <constructor-arg ref="dataSourceSpied" />
+        <property name="logFormatter">
+            <bean class="net.sf.log4jdbc.tools.Log4JdbcCustomFormatter">
+                <property name="loggingType" value="MULTI_LINE" />
+                <property name="sqlPrefix" value="SQL         :  "/>
+            </bean>
+        </property>
+    </bean>
+
+	<!-- 마이바티스 수행 객체 설정(SqlSession) -->
+	<bean id="SqlSessionFactory"
+	 class="org.mybatis.spring.SqlSessionFactoryBean">
+	 	
+	 	<!-- Bean으로 설정된 dataSource를 적용하기 -->
+	 	 <property name="dataSource" ref="dataSource" />
+		
+	<!-- Mapper 파일 위치 설정 //한번에 설정-->
+	 	<property name="mapperLocations">
+	 		<array>
+	 			<value>classpath:/mappers/**/*Mapper.xml</value>
+	 			<value>classpath:/ojt/board/dao/face/impl/*DaoImpl.xml</value>
+	 			<value>classpath:/ojt/member/dao/face/impl/*DaoImpl.xml</value>
+	 		</array>
+	 	</property>
+	</bean>  	
+	
+	<!-- 마이바티스 인터페이스 설정 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="ojt.board.dao.face , ojt.member.dao.face"/>
+	</bean>
+
+</beans>
