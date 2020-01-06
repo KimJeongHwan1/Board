@@ -7,4 +7,20 @@ CKEDITOR.editorConfig = function( config ) {
 	// Define changes to default configuration here. For example:
 	// config.language = 'fr';
 	// config.uiColor = '#AADC6E';
+
+	config.extraPlugins = 'wordcount';
+	config.wordcount = {
+
+	    // Whether or not you want to show the Word Count
+	    showWordCount: false,
+
+	    // Whether or not you want to show the Char Count
+	    showCharCount: true,
+	    
+	    // Maximum allowed Word Count
+	    maxWordCount: 4,
+
+	    // Maximum allowed Char Count
+	    maxCharCount: 1000
+	};
 };

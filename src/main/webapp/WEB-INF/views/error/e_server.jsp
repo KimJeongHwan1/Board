@@ -31,7 +31,8 @@
 <body>
 <div style="margin: auto; text-align: center;">
 <h1>500 Server Error</h1>
-location.href="/board/write.do";
+<input type="button" value="Main" onclick="main();">
+<input type="button" value="Back" onclick="back();">
 </div>
 </body>
 </html>

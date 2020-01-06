@@ -14,6 +14,7 @@
  
 <c:import url="/WEB-INF/views/tilesView/body.jsp"/>
 <script type="text/javascript" src="/resources/ckeditor/ckeditor.js"></script>
+<script type="text/javascript" src="/resources/ckeditor/plugins/wordcount/plugin.js"></script>
 
 <script type="text/javascript">
 	function button_back() {
@@ -27,11 +28,14 @@
 	function insert() {
 		if (confirm("등록하시겠습니까??") == true) { //확인
 			document.getElementById('write').submit();
-			
 		} else { //취소
 			return;
-		}
+		} 
+		/* var f = document.writeForm;
+		var content = f.ckeditor.value;
+		alert(content); */
 	}
+	
 	function patternChk() {
 		var patternChk_nick_pw = document.getElementById('ojt_board_nick_pw');
 		var blank_pattern = /[\s]/g;
@@ -42,7 +46,7 @@
 		}
 		
 	}
-
+	
 	$(document).ready(function(){
 		  var count = 1;
 		  $("#add").click(function(){
@@ -61,11 +65,11 @@
 		    count--;
 		   }
 		  });
-
-
-		 });
+	});
+	
+	
 </script>
-
+      
 <div class="container">
 <br>
 <div id="write_div">
@@ -80,16 +84,17 @@
    </c:if>
    <c:if test="${not login }">
    <td style="width: 40%">
-   <input type="text" name="ojt_board_nick" id="ojt_board_nick" placeholder="닉네임" style="width: 200px;" required/></td>
+   <input type="text" name="ojt_board_nick" id="ojt_board_nick" placeholder="닉네임" style="width: 200px;" required maxlength="16"/></td>
    <tr>
    <td style="width: 20%">비밀번호</td>
    <td style="width: 40%"><input type="password" name="ojt_board_nick_pw" id="ojt_board_nick_pw" placeholder="비밀번호" style="width: 200px;" required
-   							onkeydown="patternChk()"/></td></tr>
+   							onkeydown="patternChk()" maxlength="16" /></td></tr>
    </c:if>
 </tr>
 <tr>
    <td style="width: 20%">제목</td>
-   <td style="width: 80%"><input type="text" name="ojt_board_title" id="ojt_board_title" placeholder="게시물 제목" style="width: 498px;" required/></td>
+   <td style="width: 80%"><input type="text" name="ojt_board_title" id="ojt_board_title" placeholder="게시물 제목" style="width: 498px;" required
+ 	  maxlength="100"/></td>
 </tr>
 <tr>
 	<td style="width: 20%">구분</td>
@@ -129,17 +134,12 @@
 <tr>
    <td colspan="2">
       <!-- <textarea  rows="20" cols="100" name="content"></textarea> -->
-      <textarea class="form-control" id="editor1" name="ojt_board_content" required></textarea>
-      <script>      
-      CKEDITOR.replace('editor1' );
-      </script>
-      
-   </td>
+      <textarea class="ckeditor" id="ckeditor" name="ojt_board_content" required></textarea>
+   </td>   
 </tr>
 </table>
+
 <div id="fileDiv">
-
-
 <table id="file_table">
 <tr id="tr_file">
 <th>
@@ -157,8 +157,10 @@
 </tr>
 </table>
 </div>
+
 <input type="button" id="insertBtn" value="작성" onclick="insert();" class="btn btn-success"/>
 <input type="button" id="deleteBtn" value="취소" onclick="button_back();" class="btn btn-back"/>
+
 </form>
 
 </div>

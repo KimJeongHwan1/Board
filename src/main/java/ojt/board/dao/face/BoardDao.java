@@ -57,6 +57,9 @@ public interface BoardDao {
 	// 파일첨부 Insert
 	public void insertFile( BoardFileDto boardFileDto ) ;
 	
+	// 파일첨부 Insert
+	public void upFile( BoardFileDto boardFileDto ) ;
+	
 	// 게시글 번호로 닉네임 비밀번호 가져오기
 	public String nick_pw( BoardDto boardDto ) ;
 	
@@ -80,14 +83,17 @@ public interface BoardDao {
 	
 	// 파일 Del_flug를 'N'으로 바꿈
 	public void deleteFile( int ojt_board_no ) ;
-	
-	// 수정페이지 첨부파일
-	public void updateFile( BoardFileDto boardFileDto ) ;
-	
+		
 	// 리스트로 삭제시 첨부파일 Y 처리
 	public void deleteListFile( String names ) ;
 	
+	// Update에서 파일 Del_flug를 'N'으로 바꿈
+	public void upDelFile( String names ) ;
+	
 	// 파일 리스트를 상세보기 페이지에 보여주는 리스트
 	public List<BoardFileDto> selectNoFile( BoardFileDto boardFileDto ) ;
+	
+	// 파일번호 파일 조회
+	public BoardFileDto selectFile( int file_no ) ;
 	
 }

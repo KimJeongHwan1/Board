@@ -1,6 +1,8 @@
 package ojt.board.service.face.impl;
 
 
+import static org.hamcrest.CoreMatchers.equalTo;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Member;
@@ -74,27 +76,6 @@ public class BoardServiceImpl implements BoardService {
 		}
 	}
 
-	/*
-	 * @Override public void imgsave(ServletContext context, Board board,
-	 * MultipartHttpServletRequest mtfRequest) { List list = new ArrayList();
-	 * List<MultipartFile> fileList = mtfRequest.getFiles("file"); //String src =
-	 * mtfRequest.getParameter("src"); //System.out.println("src value : " + src);
-	 * int m=0; String path = context.getRealPath("uppage"); for (MultipartFile mf :
-	 * fileList) { String originFileName = mf.getOriginalFilename(); // 원본 파일 명 long
-	 * fileSize = mf.getSize(); // 파일 사이즈
-	 * 
-	 * //UUID String uId = UUID.randomUUID().toString().split("-")[4];
-	 * 
-	 * //저장될 파일의 이름( 원본이름 + UUID) String name = mf.getOriginalFilename()+"_"+uId;
-	 * 
-	 * System.out.println("originFileName : " + originFileName);
-	 * System.out.println("fileSize : " + fileSize);
-	 * board.setOriginname(mf.getOriginalFilename()); list.add(m, name); m++; try {
-	 * mf.transferTo(new File(path, name)); } catch (IllegalStateException e) { //
-	 * TODO Auto-generated catch block e.printStackTrace(); } catch (IOException e)
-	 * { // TODO Auto-generated catch block e.printStackTrace(); } } }
-	 */
-
 	@Override
 	public void deleteList(int ojt_board_no) {
 		boardDao.deleteList(ojt_board_no);
@@ -115,13 +96,19 @@ public class BoardServiceImpl implements BoardService {
 	}
 
 	@Override
+	public void upDelFile(String names) {
+		boardDao.upDelFile(names);
+	}
+	
+	@Override
 	public void insertFile(ServletContext context, BoardFileDto boardFileDto, MultipartHttpServletRequest mreq) {
-		List list = new ArrayList();
+		List storedList = new ArrayList();
+		List originList = new ArrayList();
 		List<MultipartFile> fileList = mreq.getFiles("file");
-
 		int m = 0 ;
+		long file_chk = 0 ;
 		String path = "C:\\Users\\jeong\\Documents\\workspace-sts-3.9.10.RELEASE\\Board\\src\\main\\webapp\\upload";
-
+		System.out.println( fileList );
 		for ( MultipartFile mf : fileList ) {
 			String originFileName = mf.getOriginalFilename() ; // 원본 파일 명
 			long fileSize = mf.getSize() ; // 파일 사이즈
@@ -136,8 +123,10 @@ public class BoardServiceImpl implements BoardService {
 			System.out.println("fileSize : " + fileSize);
 			System.out.println(path);
 			boardFileDto.setFile_origin_name(mf.getOriginalFilename());
-			list.add(m, name);
+			storedList.add(m, name);
+			originList.add(m , originFileName ) ;
 			m++;
+			file_chk = fileSize ;
 			try {
 				mf.transferTo(new File(path, name));
 			} catch (IllegalStateException e) {
@@ -146,21 +135,69 @@ public class BoardServiceImpl implements BoardService {
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			}		
+		}
+		
+			if( file_chk != 0 ) {
+				// StoredName 영역
+				for(int i=0; i<storedList.size(); i++) {
+					boardFileDto.setFile_origin_name((String)originList.get(i));
+					boardFileDto.setFile_stored_name((String)storedList.get(i));
+					boardDao.insertFile(boardFileDto);
+				}
 			}
-		}
 		
-		// StoredName 영역
-	//	String saveList = (String)list.get(0);
-		for(int i=0; i<list.size(); i++) {
-		//	saveList += ","+(String)list.get(i);
-			boardFileDto.setFile_stored_name((String)list.get(i));
-			boardDao.insertFile(boardFileDto);
-		}
-		
-	//	boardFileDto.setFile_stored_name(saveList);
-	//	boardDao.insertFile(boardFileDto);
 	}
 
+	@Override
+	public void upFile(ServletContext context, BoardFileDto boardFileDto, MultipartHttpServletRequest mreq) {
+		List storedList = new ArrayList();
+		List originList = new ArrayList();
+		List<MultipartFile> fileList = mreq.getFiles("file");
+		int m = 0 ;
+		long file_chk = 0 ;
+		String path = "C:\\Users\\jeong\\Documents\\workspace-sts-3.9.10.RELEASE\\Board\\src\\main\\webapp\\upload";
+		System.out.println( fileList );
+		for ( MultipartFile mf : fileList ) {
+			String originFileName = mf.getOriginalFilename() ; // 원본 파일 명
+			long fileSize = mf.getSize() ; // 파일 사이즈
+
+			//UUID
+			String uId = UUID.randomUUID().toString().split("-")[4];
+
+			//저장될 파일의 이름( 원본이름 + UUID)
+			String name = mf.getOriginalFilename()+"_"+uId;
+
+			System.out.println("originFileName : " + originFileName);
+			System.out.println("fileSize : " + fileSize);
+			System.out.println(path);
+			boardFileDto.setFile_origin_name(mf.getOriginalFilename());
+			storedList.add(m, name);
+			originList.add(m , originFileName ) ;
+			m++;
+			file_chk = fileSize ;
+			try {
+				mf.transferTo(new File(path, name));
+			} catch (IllegalStateException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}		
+		}
+		
+			if( file_chk != 0 ) {
+				// StoredName 영역
+				for(int i=0; i<storedList.size(); i++) {
+					boardFileDto.setFile_origin_name((String)originList.get(i));
+					boardFileDto.setFile_stored_name((String)storedList.get(i));
+					boardDao.upFile(boardFileDto);
+				}
+			}
+		
+	}
+	
 	@Override
 	public String nick_pw(BoardDto boardDto) {
 		return boardDao.nick_pw(boardDto);
@@ -198,6 +235,13 @@ public class BoardServiceImpl implements BoardService {
 	public List<BoardFileDto> selectFileView(BoardFileDto boardFileDto) {
 		return boardDao.selectNoFile(boardFileDto);
 	}
+
+	@Override
+	public BoardFileDto selectFile( int file_no ) {
+		return boardDao.selectFile(file_no);
+	}
+
+
 
 
 

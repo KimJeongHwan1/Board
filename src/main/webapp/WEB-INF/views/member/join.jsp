@@ -106,6 +106,7 @@
 			join.mem_pw.focus();
 			return false;
 		}
+		
 	}
 	$(document).ready(function() {
 
@@ -140,7 +141,7 @@
 	<!-- 아이디 -->
 	<div class="form-group">
 		<label for="mem_id">아이디</label>
-		<input type="text" class="form-control" id="idcheck" name="mem_id" placeholder="ID" required
+		<input type="text" class="form-control" id="idcheck" name="mem_id" placeholder="아이디를 입력해주세요." required
 			onkeypress="patternChk()" maxlength="16"><br>
 		<button type="button" id="idck">중복확인</button> &nbsp;&nbsp;&nbsp;<span id="check_id"></span><br>
 		<div class="check_font" id="id_check"></div>
@@ -148,7 +149,7 @@
 	<!-- 비밀번호 -->
 	<div class="form-group">
 		<label for="mem_pw">비밀번호</label> 
-		<input type="password" class="form-control" id="mem_pw" name="mem_pw" placeholder="PASSWORD" 
+		<input type="password" class="form-control" id="mem_pw" name="mem_pw" placeholder="비밀번호는 8~16자리 영문 대문자 1개 특수문자 3개를 포함해야합니다." 
 			required onkeypress="patternChk()" maxlength="16">
 		
 	</div>
@@ -156,7 +157,7 @@
 	<div class="form-group">
 		<label for="member_pw2">비밀번호 확인</label> <input type="password"
 			class="form-control" name="mem_pwCheck"
-			placeholder="Confirm Password" required>
+			placeholder="비밀번호를 동일하게 입력해주세요." required>
 		<!-- 			<div class="check_font" id="pw2_check"></div> -->
 
 	</div>
@@ -164,7 +165,7 @@
 	<div class="form-group">
 		<label for="mem_name">이름</label> <input type="text"
 			class="form-control" id="mem_name" name="mem_name"
-			placeholder="Name" required onkeypress="patternChk()" maxlength="5">
+			placeholder="이름을 적어주세요." required onkeypress="patternChk()" maxlength="5">
 	</div>
 	
 		<div class="reg_button">

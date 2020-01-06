@@ -4,14 +4,16 @@ import java.util.Date;
 
 public class BoardFileDto {
 
-	int file_no ;
-	String file_origin_name ;
-	String file_stored_name ;
-	int ojt_board_no ;
-	String mem_id ;
-	String ojt_board_nick ;
-	Date file_date ;
-	String file_del_flug ;
+	int file_no ; // File idx
+	String file_origin_name ; // 실제 파일명
+	String file_stored_name ; // 업로드시 파일명
+	int ojt_board_no ; // Board_no
+	String mem_id ; // 회원 아이디
+	String ojt_board_nick ; // 비회원 닉네임
+	Date file_date ; // 파일첨부 Sysdate
+	String file_del_flug ; // 파일 삭제 여부 Y/N
+	int file_count ; // 파일생성시 1 삭제시 0
+	
 	public int getFile_no() {
 		return file_no;
 	}
@@ -60,17 +62,21 @@ public class BoardFileDto {
 	public void setFile_del_flug(String file_del_flug) {
 		this.file_del_flug = file_del_flug;
 	}
+	
+	public int getFile_count() {
+		return file_count;
+	}
+	public void setFile_count(int file_count) {
+		this.file_count = file_count;
+	}
 	@Override
 	public String toString() {
 		return "BoardFileDto [file_no=" + file_no + ", file_origin_name=" + file_origin_name + ", file_stored_name="
 				+ file_stored_name + ", ojt_board_no=" + ojt_board_no + ", mem_id=" + mem_id + ", ojt_board_nick="
-				+ ojt_board_nick + ", file_date=" + file_date + ", file_del_flug=" + file_del_flug + ", getFile_no()="
-				+ getFile_no() + ", getFile_origin_name()=" + getFile_origin_name() + ", getFile_stored_name()="
-				+ getFile_stored_name() + ", getOjt_board_no()=" + getOjt_board_no() + ", getMem_id()=" + getMem_id()
-				+ ", getOjt_board_nick()=" + getOjt_board_nick() + ", getFile_date()=" + getFile_date()
-				+ ", getFile_del_flug()=" + getFile_del_flug() + ", getClass()=" + getClass() + ", hashCode()="
-				+ hashCode() + ", toString()=" + super.toString() + "]";
+				+ ojt_board_nick + ", file_date=" + file_date + ", file_del_flug=" + file_del_flug + ", file_count="
+				+ file_count + "]";
 	}
+	
 	
 	
 	

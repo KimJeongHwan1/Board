@@ -111,16 +111,46 @@ $(document).ready(function() {
 			return false ;
 		}
 	});
-
+	
+/* 	var id = $('#checkRow').val(); // 상세보기 수정 버튼 클릭시 띄울것
+	$('#'+id).click(function(event){
+		var check = prompt('비밀번호를 입력해주세요.' , '' );
+		var no = $('#checkRow').val();
+		console.log( check ) ;
+		console.log(no);
+		
+		
+		if ( check != null ) {
+			// 전송 폼
+			var $form = $("<form>")
+				.attr("action", "/board/check/pw.do")
+				.attr("method", "post")
+				.append(
+					$("<input>")
+						.attr("type", "hidden")
+						.attr("name", "check")
+						.attr("value", check)		
+				)
+				.append(
+						$("<input>")
+						.attr("type", "hidden")
+						.attr("name", "no")
+						.attr("value", no)	
+						);
+			$(document.body).append($form);
+			$form.submit(); }
+			 else {
+				alert("값이 잘못되었습니다.")
+				return ;
+			}
+	}); */
 	
 });
-
-
 </script>
 
 <div class="container">
 
-	<div id="list">
+<div id="list">
 <table class="table" id="listTable">
 	<thead>
 		<tr>
@@ -137,7 +167,7 @@ $(document).ready(function() {
 			<th style="width: 10%; text-align: center; ">구분</th>
 		</tr>
 	</thead>
-<tbody>
+<tbody class="tbody">
 <c:forEach items="${list}" var="list" >
 	<c:if test="${list.ojt_board_block eq 0 }">
 	<tr onclick="location.href='/board/view.do?ojt_board_no=${list.ojt_board_no }'">
@@ -146,18 +176,23 @@ $(document).ready(function() {
 		<c:if test="${list.mem_id eq loginid }">
 			<tr onclick="location.href='/board/view.do?ojt_board_no=${list.ojt_board_no }'">
 		</c:if>
-		<c:if test="${list.mem_id != loginid }">
+ 		<c:if test="${list.mem_id != loginid }">
 			<tr onclick="mem_block();">
 		</c:if>
-
+		<c:if test="${list.ojt_board_nick eq null && list.mem_id != loginid}">
+			<tr onclick="mem_block();">
+		</c:if>
+		<c:if test="${list.ojt_board_nick != null }">
+			<tr onclick="location.href='/board/pwListCheck.do?ojt_board_no=${list.ojt_board_no }'">
+		</c:if> 
 	</c:if>
 		<td>
-			<input type="checkbox" name="checkRow" value="${list.ojt_board_no }" />
+			<input type="checkbox" name="checkRow" value="${list.ojt_board_no }" id="checkRow"/>
 		</td>
 		<td>${list.rnum }</td>
 		<td>${list.ojt_board_category }</td>
 		
-		<c:if test="${list.count_file > 0 }">
+		<c:if test="${list.file_count >= 1 }">
 		<c:if test="${list.ojt_board_import eq 0 }">
 		<td id="title">${list.ojt_board_title }[첨부파일]</td>
 		</c:if>
@@ -166,19 +201,19 @@ $(document).ready(function() {
 		</c:if>
 		</c:if>
 		
-		<c:if test="${list.count_file eq 0 }">
+		<c:if test="${list.file_count eq 0 }">
 		<c:if test="${list.ojt_board_import eq 0 }">
 		<td id="title">${list.ojt_board_title }</td>
 		</c:if>
 		<c:if test="${list.ojt_board_import eq 1 }">
 		<td id="title">[중요]${list.ojt_board_title }</td>
 		</c:if>
-		</c:if>
+		</c:if> 
 		
-		<c:if test="${list.mem_id != null }">
+		<c:if test="${list.ojt_board_nick == null }">
 		<td>${list.mem_name }(${list.mem_id })</td>
 		</c:if>
-		<c:if test="${list.mem_id eq null }">
+		<c:if test="${list.ojt_board_nick != null }">
 		<td>${list.ojt_board_nick }</td>
 		</c:if>
 		<td>${list.ojt_board_recommend }</td>
@@ -204,9 +239,6 @@ $(document).ready(function() {
 
 <div id="pagingBox">
 <c:import url="/WEB-INF/views/tilesView/BoardPaging.jsp" />
-
-
-
 
 </div> 
 </div>

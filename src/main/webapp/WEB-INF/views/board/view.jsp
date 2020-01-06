@@ -22,10 +22,10 @@ $(document).ready(function() {
 		var pw = prompt( "비밀번호를 입력해주세요" + "" );
 		console.log(pw);
 	}); */
-	$("#btnUpdate").click(function(){
+/* 	$("#btnUpdate").click(function(){
 		$(location).attr("href",
 		"/board/update.do?ojt_board_no=${viewBoard.ojt_board_no}");
-	});
+	}); */
 	
 	$("#rec_btn").click(function(){
 		
@@ -64,13 +64,13 @@ $(document).ready(function() {
 		window.history.back();
 	}
 
-	function button_event() {
+/* 	function button_event() {
 		if (confirm("정말 삭제하시겠습니까??") == true) { //확인
 			$(location).attr("href",
 					"/board/delete.do?ojt_board_no=${viewBoard.ojt_board_no}");
 		} else { //취소
 			return;
-		}
+		} */
 	}
 	
 </script>
@@ -120,13 +120,14 @@ $(document).ready(function() {
 <a href="/file/download?fileno=${boardFile.fileno }">${boardFile.originName }</a>
 </div> --%>
 
+
 <table>
 <tr>
 <th>첨부파일</th>
 </tr>
 <c:forEach items="${boardFileDto }" var="boardFileDto">
 <tr>
-<td><a href="#" name="File">${boardFileDto.file_stored_name }</a></td>
+<td><a href="/board/down/file.do?file_no=${boardFileDto.file_no}">${boardFileDto.file_stored_name }</a></td>
 </tr>
 </c:forEach>
 </table>
@@ -135,8 +136,8 @@ $(document).ready(function() {
 	<button id="btnList" class="btn btn-primary" onclick="goBack();">목록</button>
 <c:if test="${loginid eq viewBoard.mem_id }"> 
 	<!-- <button id="btnUpdate" class="btn btn-info" type="button" onclick=>수정</button> -->
-<button id="btnUpdate" class="btn btn-info" type="button">수정</button>
-	<input type="button" id="deleteBtn" value="삭제" onclick="button_event();" class="btn btn-danger"/>
+<button id="btnUpdate" class="btn btn-info" type="button" onclick="location.href='/board/pwViewCheck.do?ojt_board_no=${viewBoard.ojt_board_no}'">수정</button>
+	<input type="button" id="deleteBtn" value="삭제" onclick="location.href='/board/pwDelCheck.do?ojt_board_no=${viewBoard.ojt_board_no}'" class="btn btn-danger"/>
 </c:if>
 
 <c:if test="${login }">

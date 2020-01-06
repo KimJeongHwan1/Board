@@ -24,7 +24,8 @@ public class BoardDto {
 	String mem_name ; // 회원 이름
 	String file_stored_name ; // 업로드된 파일 이름
 	int rnum ; // 게시글 번호
-	int count_file  ;
+	int file_count ; // 파일이 존재하는지 유무
+	
 	public int getOjt_board_no() {
 		return ojt_board_no;
 	}
@@ -127,11 +128,11 @@ public class BoardDto {
 	public void setRnum(int rnum) {
 		this.rnum = rnum;
 	}
-	public int getCount_file() {
-		return count_file;
+	public int getFile_count() {
+		return file_count;
 	}
-	public void setCount_file(int count_file) {
-		this.count_file = count_file;
+	public void setFile_count(int file_count) {
+		this.file_count = file_count;
 	}
 	@Override
 	public String toString() {
@@ -142,8 +143,20 @@ public class BoardDto {
 				+ ", ojt_board_import=" + ojt_board_import + ", mem_id=" + mem_id + ", ojt_board_nick=" + ojt_board_nick
 				+ ", ojt_board_nick_pw=" + ojt_board_nick_pw + ", ojt_board_del_plug=" + ojt_board_del_plug
 				+ ", last_date=" + last_date + ", mem_name=" + mem_name + ", file_stored_name=" + file_stored_name
-				+ ", rnum=" + rnum + ", count_file=" + count_file + "]";
+				+ ", rnum=" + rnum + ", file_count=" + file_count + ", getOjt_board_no()=" + getOjt_board_no()
+				+ ", getOjt_board_category()=" + getOjt_board_category() + ", getOjt_board_title()="
+				+ getOjt_board_title() + ", getOjt_board_content()=" + getOjt_board_content()
+				+ ", getOjt_board_recommend()=" + getOjt_board_recommend() + ", getOjt_board_hit()="
+				+ getOjt_board_hit() + ", getOjt_board_last_date()=" + getOjt_board_last_date()
+				+ ", getOjt_board_block()=" + getOjt_board_block() + ", getOjt_board_import()=" + getOjt_board_import()
+				+ ", getMem_id()=" + getMem_id() + ", getOjt_board_nick()=" + getOjt_board_nick()
+				+ ", getOjt_board_nick_pw()=" + getOjt_board_nick_pw() + ", getOjt_board_del_plug()="
+				+ getOjt_board_del_plug() + ", getLast_date()=" + getLast_date() + ", getMem_name()=" + getMem_name()
+				+ ", getFile_stored_name()=" + getFile_stored_name() + ", getRnum()=" + getRnum() + ", getFile_count()="
+				+ getFile_count() + ", getClass()=" + getClass() + ", hashCode()=" + hashCode() + ", toString()="
+				+ super.toString() + "]";
 	}
+	
 	
 	
 }

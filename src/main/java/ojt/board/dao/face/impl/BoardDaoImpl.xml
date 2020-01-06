@@ -26,7 +26,7 @@
 			OJT_BOARD_NICK_PW , 
 			OJT_BOARD_DEL_PLUG, 
 			MEM_NAME,
-			COUNT_FILE
+			FILE_COUNT
 		FROM (
 			SELECT 
 				(ROW_NUMBER() OVER()) AS RNUM ,
@@ -46,7 +46,7 @@
 				OJT_BOARD_NICK_PW , 
 				OJT_BOARD_DEL_PLUG, 
 				MEM_NAME,
-				COUNT_FILE 
+				FILE_COUNT
 			FROM ( 
 				SELECT
 					OJT_BOARD_NO ,
@@ -65,7 +65,7 @@
 					OJT_BOARD_NICK_PW , 
 					OJT_BOARD_DEL_PLUG, 
 					MEM_NAME,
-					COUNT_FILE
+					FILE_COUNT
 				FROM (
 					SELECT 
 						OJT_BOARD.OJT_BOARD_NO ,
@@ -91,14 +91,14 @@
 						OJT_BOARD_NICK_PW , 
 						OJT_BOARD_DEL_PLUG, 
 						MEMBER.MEM_NAME,
-						COUNT(OJT_FILE.FILE_NO) AS COUNT_FILE
+						SUM(FILE_COUNT) AS FILE_COUNT
 					FROM 
 						OJT_BOARD
 					LEFT OUTER JOIN 
 						MEMBER 
 					ON 
 						OJT_BOARD.MEM_ID = MEMBER.MEM_ID
-					INNER JOIN
+					LEFT OUTER JOIN
 						OJT_FILE
 					ON
 						OJT_BOARD.OJT_BOARD_NO = OJT_FILE.OJT_BOARD_NO
@@ -110,6 +110,7 @@
 				) B 
 				ORDER BY 
 					OJT_BOARD_LAST_DATE
+					
 				) Bo
 			) Bob
 		ORDER BY
@@ -276,7 +277,8 @@
 				MEM_ID,
 				OJT_BOARD_NICK,
 				FILE_DATE,
-				FILE_DEL_FLUG
+				FILE_DEL_FLUG,
+				FILE_COUNT
 			) VALUES (
 				NEXTVAL('ojt_file_seq'),
 				#{file_origin_name},
@@ -285,10 +287,36 @@
 				#{mem_id},
 				#{ojt_board_nick},
 				NOW(),
-				'Y'
+				'Y',
+				1
 			)
 	</insert>
-	
+
+	<insert id="upFile" parameterType="ojt.board.dto.BoardFileDto">
+		INSERT INTO 
+			OJT_FILE ( 
+				FILE_NO, 
+				FILE_ORIGIN_NAME, 
+				FILE_STORED_NAME,
+				OJT_BOARD_NO,
+				MEM_ID,
+				OJT_BOARD_NICK,
+				FILE_DATE,
+				FILE_DEL_FLUG,
+				FILE_COUNT
+			) VALUES (
+				NEXTVAL('ojt_file_seq'),
+				#{file_origin_name},
+				#{file_stored_name},
+				#{ojt_board_no},
+				#{mem_id},
+				#{ojt_board_nick},
+				NOW(),
+				'Y',
+				1
+			)
+	</insert>
+		
 	<select id="nick_pw" parameterType="ojt.board.dto.BoardDto"
 		resultType="String">
 		SELECT
@@ -362,18 +390,8 @@
 		UPDATE
 			OJT_FILE
 		SET
-			FILE_DEL_FLUG = 'N'
-		WHERE
-			OJT_BOARD_NO = #{ojt_board_no}
-	</update>
-	
-	<update id="updateFile" parameterType="ojt.board.dto.BoardFileDto">
-		UPDATE
-			OJT_FILE
-		SET
-			FILE_ORIGIN_NAME = #{file_origin_name},
-			FILE_STORED_NAME = #{file_stored_name},
-			FILE_DATE = NOW()
+			FILE_DEL_FLUG = 'N',
+			FILE_COUNT = 0
 		WHERE
 			OJT_BOARD_NO = #{ojt_board_no}
 	</update>
@@ -382,13 +400,26 @@
 		UPDATE 
 			OJT_FILE
 		SET 
-			FILE_DEL_FLUG = 'N'
+			FILE_DEL_FLUG = 'N',
+			FILE_COUNT = 0
 		WHERE 
 			OJT_BOARD_NO
 		IN 
 			(${ value })
 	</update>
-	
+
+	<update id="upDelFile" parameterType="String">
+		UPDATE 
+			OJT_FILE
+		SET 
+			FILE_DEL_FLUG = 'N',
+			FILE_COUNT = 0
+		WHERE 
+			FILE_NO
+		IN 
+			(${ value })
+	</update>
+		
 	<select id="selectNoFile"
 	parameterType="ojt.board.dto.BoardFileDto"
 	resultType="ojt.board.dto.BoardFileDto">
@@ -400,11 +431,34 @@
 		MEM_ID,
 		OJT_BOARD_NICK,
 		FILE_DATE,
-		FILE_DEL_FLUG
+		FILE_DEL_FLUG,
+		FILE_COUNT
 	FROM 
 		OJT_FILE
 	WHERE 
 		OJT_BOARD_NO = #{ojt_board_no }
+	AND
+		FILE_DEL_FLUG = 'Y'
 	</select>
 	
+	<select id="selectFile"
+	parameterType="int"
+	resultType="ojt.board.dto.BoardFileDto">
+	SELECT
+		FILE_NO,
+		FILE_ORIGIN_NAME,
+		FILE_STORED_NAME,
+		OJT_BOARD_NO,
+		MEM_ID,
+		OJT_BOARD_NICK,
+		FILE_DATE,
+		FILE_DEL_FLUG,
+		FILE_COUNT
+	FROM
+		OJT_FILE
+	WHERE
+		FILE_NO = #{file_no}
+	AND
+		FILE_DEL_FLUG = 'Y'
+	</select>
 </mapper>

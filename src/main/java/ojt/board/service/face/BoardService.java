@@ -42,19 +42,31 @@ public interface BoardService {
 	// 리스트 삭제
 	public void boardListDelete(String names);
 	
+	// 리스트 삭제
+	public void upDelFile(String names);
+	
 	// 파잁첨부
 	public void insertFile(ServletContext context , BoardFileDto boardFileDto , MultipartHttpServletRequest mreq ) ;
 	
+	// 파잁첨부
+	public void upFile(ServletContext context , BoardFileDto boardFileDto , MultipartHttpServletRequest mreq ) ;
+		
 	// 게시글 번호로 비회원 비밀번호 불러오기
 	public String nick_pw( BoardDto boardDto ) ;
 	
+	// 추천한 아이디와 해당 게시글 번호 저장
 	public void saveRecId( String mem_id , int ojt_board_no) ;
 	
+	// 게시물 Total 추천수
 	public int saveRecCount( int ojt_board_no ) ;
 	
+	// 추천 여부 체크
 	public int RecCheck( BoardRecommendDto boardRecommendDto ) ;
 	
+	// 게시글에 첨부된 파일 보여주기
 	public List<BoardFileDto> selectFileView( BoardFileDto boardFileDto ) ;
 	
+	// 파일번호로 첨부파일 조회
+	public BoardFileDto selectFile( int file_no ) ;
 
 } 
